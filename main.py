@@ -1,6 +1,6 @@
 import sys
 from PIL import Image
-
+import argparse
 
 def convert_image_to_ASCII_Art(image_path, path_to_save, heigth, width):
     image = Image.open(image_path)
@@ -18,6 +18,17 @@ def convert_image_to_ASCII_Art(image_path, path_to_save, heigth, width):
     ascii_image = str("\n".join(ascii_image))
     with open(f"{path_to_save}/ascii_art.txt", 'w') as f:
         f.write(ascii_image) 
+
+if sys.argv[1] in ['-h', '--help']:
+    description = ["python3", 
+                   "'path to main.py of this programm'", 
+                   "'path to the image you want to convert'", 
+                   "'path to the directory you want to save ASCII art'", 
+                   "'width_of_picture_you_want'", 
+                   "'height_of_picture_you_want'"] 
+    description = ' '.join(description)
+    parser = argparse.ArgumentParser(description = description)
+    args = parser.parse_args()
 
 if __name__ == '__main__':
     args = sys.argv
