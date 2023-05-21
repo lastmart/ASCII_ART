@@ -1,16 +1,7 @@
-import sys
 import argparse
+import tkinter as tk
+from tkinter import messagebox
 from PIL import Image
-
-
-help_description = [
-    "python3",
-    "'path to main.py of this programm'",
-    "'path to the image you want to convert'",
-    "'path to the directory you want to save ASCII art'",
-    "'width_of_picture_you_want'",
-    "'height_of_picture_you_want'",
-]
 
 
 def convert_image_to_ASCII_Art(image_path, path_to_save, heigth, width, ascii_chars):
@@ -19,9 +10,8 @@ def convert_image_to_ASCII_Art(image_path, path_to_save, heigth, width, ascii_ch
     new_width = width if width is not None else image.width
     resized_image = resize_image(image, new_width, new_heigth)
     pixels = [get_grayscaled_pixel(pixel) for pixel in resized_image.getdata()]
-    changed_pixels = [
-        ascii_chars[pixel // (255 // (len(ascii_chars) - 1))] for pixel in pixels
-    ]
+    char_segments_count = 255 // (len(ascii_chars) - 1)
+    changed_pixels = [ascii_chars[pixel // char_segments_count] for pixel in pixels]
     ascii_image = []
     for i in range(0, len(changed_pixels), new_width):
         ascii_image.append("".join(changed_pixels[i : i + new_width]))
@@ -54,7 +44,7 @@ def get_grayscaled_pixel(pixel):
     return gray
 
 
-if __name__ == "__main__":
+def create_parser():
     parser = argparse.ArgumentParser(description="Converts image to ISCII art")
     parser.add_argument(
         "-i", dest="image_path", type=str, help="Path to the converted image"
@@ -76,6 +66,64 @@ if __name__ == "__main__":
     )
     parser.add_argument("ascii_symbols", type=str, help="Symbols to ASCII art")
     print(parser.parse_args())
+    return parser
+
+
+ui_parameters = [
+    "Абсолютный путь до изображения",
+    "Абсолютный путь, куда сохранить результат",
+    "Высота ASCII art",
+    "Ширина ASCII art",
+    "Алфавит из символов",
+]
+
+
+def get_tkinter_input():
+    window = tk.Tk()
+    window.title("Конвертор изображения в ASCII art")
+    window.geometry("500x300")
+    frame = tk.Frame(window, padx=10, pady=10)
+    frame.pack(expand=True)
+    inital_row = 3
+    position_aruments = []
+    for i in range(inital_row, inital_row + len(ui_parameters)):
+        parameter = ui_parameters[i - inital_row]
+        parameter_lb = tk.Label(frame, text=parameter)
+        parameter_lb.grid(row=i, column=1)
+        parameter_tf = tk.Entry(frame)
+        position_aruments.append(parameter_tf)
+        parameter_tf.grid(row=i, column=2)
+
+    cal_btn = tk.Button(
+        frame,
+        text="Конвертировать",
+        command=lambda: convertor_helper(position_aruments),
+    )
+    cal_btn.grid(row=inital_row + len(ui_parameters), column=2)
+
+    window.mainloop()
+
+
+def convertor_helper(args):
+    try:
+        image_path = str(args[0].get())
+        path_to_save = str(args[1].get())
+        heigth = int(args[2].get())
+        width = int(args[3].get())
+        ascii_chars = str(args[4].get())
+    except Exception:
+        messagebox.showerror(
+            "convertor", "Введите все параметры прежде чем конвертировать изображение"
+        )
+        return None
+
+    convert_image_to_ASCII_Art(image_path, path_to_save, heigth, width, ascii_chars)
+    messagebox.showinfo("convertor", "Изображение успешно сконвертировано")
+
+
+if __name__ == "__main__":
+    parser = create_parser()
+    get_tkinter_input()
     args = parser.parse_args()
     convert_image_to_ASCII_Art(
         args.image_path, args.path_to_save, args.heigth, args.width, args.ascii_symbols
