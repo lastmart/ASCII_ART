@@ -4,33 +4,15 @@ import numpy as np
 import argparse
 
 
-ascii_chars = [
-        "A",
-        "B",
-        ".",
-        ":",
-        "E",
-        "F",
-        "@",
-        "H",
-        "*",
-        "J",
-        "K",
-        "L",
-        "M",
-        "N",
-        "O",
-        "|",
-    ]
-
+ascii_chars = "AB.:EF@H*JKLMNO|"
+    
 def convert_image_to_ASCII_Art(image_path, path_to_save, heigth, width):
-    image = Image.open(image_path)
+    image = Image.open(image_path)  
     new_heigth = heigth if heigth is not None else image.height
     new_width = width if width is not None else image.width
     resized_image = resize_image(image, new_width, new_heigth)
-    black_and_white_image = resized_image.convert("L")
-    pixels = black_and_white_image.getdata()
-    changed_pixels = [ascii_chars[pixel // 17] for pixel in pixels]
+    pixels = [get_grayscaled_pixel(pixel) for pixel in resized_image.getdata()]
+    changed_pixels = [ascii_chars[pixel // len(ascii_chars)] for pixel in pixels]
     ascii_image = []
     for i in range(0, len(changed_pixels), new_width):
         ascii_image.append("".join(changed_pixels[i : i + new_width]))
@@ -57,7 +39,7 @@ def nearest_neighbour_interpolation(image, x, y, scale_x, scale_y):
 def get_grayscaled_pixel(pixel):
     red, green, blue = pixel[0:3]
     gray = int(0.2989 * red + 0.5870 * green + 0.1140 * blue)
-    return gray, gray, gray
+    return gray
 
 if sys.argv[1] in ["-h", "--help"]:
     description = [
