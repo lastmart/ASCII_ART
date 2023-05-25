@@ -1,5 +1,5 @@
 import argparse
-from ascii_convertor import convert_image_to_ASCII_Art
+from ascii_converter import convert_image_to_ASCII_Art
 from ascii_gui import Gui
 
 

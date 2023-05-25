@@ -1,13 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
 import tkinter.scrolledtext as st
-from ascii_convertor import convert_image_to_ASCII_Art
+from ascii_converter import convert_image_to_ASCII_Art
 
 
 class Gui:
     def __init__(self, ui_parameters, initial_row):
         self.window = tk.Tk()
         self._image_helper = Image_helper(None, None, None)
+        self.font_size = 15
         self.window.title("Конвертор изображения в ASCII art")
         self.window.geometry("500x300")
         frame = tk.Frame(self.window, padx=10, pady=10)
@@ -61,39 +62,42 @@ class Gui:
         messagebox.showinfo("convertor", "Изображение успешно сконвертировано")
 
     def _show_art(self):
-        with open(self._image_helper.ascii_art_file) as f:
+        with open(self._image_helper.ascii_art_file, 'r') as f:
             ascii_art = "".join(f.readlines())
 
         self.art_window = tk.Tk()
         self.art_window.title("ASCII Art")
+
         text_area = st.ScrolledText(
-            self.art_window, width=140, height=40, font=("Courier New", 15)
+            self.art_window,
+            width=1000,
+            height=600,
+            font=("Courier New", self.font_size),
+            wrap=None,
         )
-        text_area.grid(column=0, pady=10, padx=10)
+        # text_area.grid(column=0, pady=10, padx=10)
         text_area.insert(tk.INSERT, ascii_art)
         text_area.configure(state="disabled")
+        text_area.pack(fill="both", expand=True)
         self._image_helper.ascii_art = text_area
-        self._init_scale_art_buttons()
+
+        self.art_window.bind("=", lambda e: self._change_font_size(text_area, 1))
+        self.art_window.bind("+", lambda e: self._change_font_size(text_area, 1))
+        self.art_window.bind("-", lambda e: self._change_font_size(text_area, -1))
+        self.art_window.bind("_", lambda e: self._change_font_size(text_area, -1))
         self.art_window.mainloop(0)
 
-    def _init_scale_art_buttons(self, button_row):
-        frame = tk.Frame(self.art_window, padx=10, pady=10)
-        frame.pack(expand=True)
-        convert_button = tk.Button(
-            frame,
-            text="+",
-            command=lambda: self._scale_image(1),
-        )
-        convert_button.grid(row=button_row, column=1)
-        show_button = tk.Button(
-            frame,
-            text="-",
-            command=lambda: self._scale_image(-1)
-        )
-        show_button.grid(row=button_row, column=1)
+    def _change_font_size(self, text_window, delta_size):
+        if self.font_size + delta_size <= 0:
+            return
 
-    def _scale_image(self, inc):
-        pass
+        self.font_size += delta_size
+
+        text_window.configure(
+            font=('Courier New', self.font_size),
+            wrap='none'
+        )
+
 
 class Image_helper:
     def __init__(self, ascii_art_file, parameters, ascii_art):

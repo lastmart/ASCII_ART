@@ -8,7 +8,7 @@ def convert_image_to_ASCII_Art(image_path, path_to_save, heigth, width, ascii_ch
     resized_image = resize_image(image, new_width, new_heigth)
     pixels = [get_grayscaled_pixel(pixel) for pixel in resized_image.getdata()]
     char_segments_count = 255 // (len(ascii_chars) - 1)
-    changed_pixels = [ascii_chars[pixel // char_segments_count] for pixel in pixels]
+    changed_pixels = [3 * ascii_chars[pixel // char_segments_count] for pixel in pixels]
     ascii_image = []
     for i in range(0, len(changed_pixels), new_width):
         ascii_image.append("".join(changed_pixels[i : i + new_width]))
