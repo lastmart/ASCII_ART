@@ -62,7 +62,7 @@ class Gui:
         messagebox.showinfo("convertor", "Изображение успешно сконвертировано")
 
     def _show_art(self):
-        with open(self._image_helper.ascii_art_file, 'r') as f:
+        with open(self._image_helper.ascii_art_file, "r") as f:
             ascii_art = "".join(f.readlines())
 
         self.art_window = tk.Tk()
@@ -75,7 +75,6 @@ class Gui:
             font=("Courier New", self.font_size),
             wrap=None,
         )
-        # text_area.grid(column=0, pady=10, padx=10)
         text_area.insert(tk.INSERT, ascii_art)
         text_area.configure(state="disabled")
         text_area.pack(fill="both", expand=True)
@@ -93,10 +92,7 @@ class Gui:
 
         self.font_size += delta_size
 
-        text_window.configure(
-            font=('Courier New', self.font_size),
-            wrap='none'
-        )
+        text_window.configure(font=("Courier New", self.font_size), wrap="none")
 
 
 class Image_helper:

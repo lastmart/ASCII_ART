@@ -21,25 +21,39 @@ def create_parser():
         "--width",
         type=int,
         default=None,
-        help="WIdth of ASCII art (defalt: width of image)",
+        help="Width of ASCII art (defalt: width of image)",
     )
-    parser.add_argument("ascii_symbols", type=str, help="Symbols to ASCII art")
-    print(parser.parse_args())
+    parser.add_argument(
+        "-a", dest="ascii_symbols", type=str, help="Symbols to ASCII art"
+    )
+    subparsers = parser.add_subparsers()
+    create_gui(subparsers)
     return parser
 
 
-if __name__ == "__main__":
-    parser = create_parser()
-    args = parser.parse_args()
-    ui_parameters = [
+def create_gui(subparsers):
+    gui_parameters = [
         "Абсолютный путь до изображения",
         "Абсолютный путь, куда сохранить результат",
         "Высота ASCII art",
         "Ширина ASCII art",
         "Алфавит из символов",
     ]
-    gui = Gui(ui_parameters, 3)
-    gui.show_gui()
-    convert_image_to_ASCII_Art(
-        args.image_path, args.path_to_save, args.heigth, args.width, args.ascii_symbols
-    )
+    gui = Gui(gui_parameters, initial_row=3)
+    parser_gui = subparsers.add_parser("gui", help="Shows GUI")
+    parser_gui.set_defaults(func=gui.show_gui)
+
+
+if __name__ == "__main__":
+    parser = create_parser()
+    args = parser.parse_args()
+    try:
+        args.func()
+    except AttributeError:
+        convert_image_to_ASCII_Art(
+            args.image_path,
+            args.path_to_save,
+            args.heigth,
+            args.width,
+            args.ascii_symbols,
+        )
