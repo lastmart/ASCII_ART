@@ -1,18 +1,30 @@
 from PIL import Image
 
 
-def convert_image_to_ASCII_Art(image_path, path_to_save, heigth, width, ascii_chars):
+def convert_image_to_ASCII_Art(image_path, heigth, width, ascii_chars):
     image = Image.open(image_path)
     new_heigth = heigth if heigth is not None else image.height
     new_width = width if width is not None else image.width
-    resized_image = resize_image(image, new_width, new_heigth)
+    if ascii_chars is None:
+        raise ValueError("Ascii chars isn't selected")        
+    return _convert_image(image, new_heigth, new_width, ascii_chars)
+
+
+def _convert_image(image, heigth, width, ascii_chars):
+    resized_image = resize_image(image, width, heigth)
     pixels = [get_grayscaled_pixel(pixel) for pixel in resized_image.getdata()]
-    char_segments_count = 255 // (len(ascii_chars) - 1)
-    changed_pixels = [3 * ascii_chars[pixel // char_segments_count] for pixel in pixels]
+    char_segments_count = 255 / len(ascii_chars)
+    changed_pixels = [
+        3 * ascii_chars[int(pixel / char_segments_count)] for pixel in pixels
+    ]
     ascii_image = []
-    for i in range(0, len(changed_pixels), new_width):
-        ascii_image.append("".join(changed_pixels[i : i + new_width]))
+    for i in range(0, len(changed_pixels), width):
+        ascii_image.append("".join(changed_pixels[i : i + width]))
     ascii_image = str("\n".join(ascii_image))
+    return ascii_image
+
+
+def save_ascii_image_in_file(ascii_image, path_to_save):
     file_name = f"{path_to_save}/ascii_art.txt"
     with open(file_name, "w") as f:
         f.write(ascii_image)

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import tkinter.scrolledtext as st
 from ascii_converter import convert_image_to_ASCII_Art
+from ascii_converter import save_ascii_image_in_file
 
 
 class Gui:
@@ -31,7 +32,7 @@ class Gui:
         convert_button = tk.Button(
             frame,
             text="Конвертировать",
-            command=lambda: self._call_convertor(self._image_helper.parameters),
+            command=lambda: self._call_converter(self._image_helper.parameters),
         )
         convert_button.grid(row=button_row, column=2)
         show_button = tk.Button(
@@ -42,7 +43,7 @@ class Gui:
     def show_gui(self):
         self.window.mainloop()
 
-    def _call_convertor(self, args):
+    def _call_converter(self, args):
         try:
             image_path = str(args[0].get())
             path_to_save = str(args[1].get())
@@ -51,15 +52,16 @@ class Gui:
             ascii_chars = str(args[4].get())
         except Exception:
             messagebox.showerror(
-                "convertor",
+                "converter",
                 "Введите все параметры прежде чем конвертировать изображение",
             )
             return None
-        self._image_helper.ascii_art_file = convert_image_to_ASCII_Art(
-            image_path, path_to_save, heigth, width, ascii_chars
+        ascii_image = convert_image_to_ASCII_Art(image_path, heigth, width, ascii_chars)
+        self._image_helper.ascii_art_file = save_ascii_image_in_file(
+            ascii_image, path_to_save
         )
         self._image_helper.ascii_art = None
-        messagebox.showinfo("convertor", "Изображение успешно сконвертировано")
+        messagebox.showinfo("converter", "Изображение успешно сконвертировано")
 
     def _show_art(self):
         with open(self._image_helper.ascii_art_file, "r") as f:
@@ -89,9 +91,7 @@ class Gui:
     def _change_font_size(self, text_window, delta_size):
         if self.font_size + delta_size <= 0:
             return
-
         self.font_size += delta_size
-
         text_window.configure(font=("Courier New", self.font_size), wrap="none")
 
 
