@@ -1,12 +1,21 @@
 from PIL import Image
 
 
-def convert_image_to_ASCII_Art(image_path, heigth, width, ascii_chars):
-    image = Image.open(image_path)
+def convert_image_to_ASCII_Art(image, heigth: int, width: int, ascii_chars):
+    if isinstance(image, str):
+        try:
+            image = Image.open(image)
+        except FileNotFoundError as e:
+            raise e from ValueError("You specified the wrong path to the image") 
+    else:
+        try:
+            image = Image.fromarray(image)
+        except Exception:
+            raise TypeError("The image has the wrong format")
     new_heigth = heigth if heigth is not None else image.height
     new_width = width if width is not None else image.width
     if ascii_chars is None:
-        raise ValueError("Ascii chars isn't selected")        
+        raise ValueError("Ascii chars isn't selected")
     return _convert_image(image, new_heigth, new_width, ascii_chars)
 
 
@@ -26,8 +35,11 @@ def _convert_image(image, heigth, width, ascii_chars):
 
 def save_ascii_image_in_file(ascii_image, path_to_save):
     file_name = f"{path_to_save}/ascii_art.txt"
-    with open(file_name, "w") as f:
-        f.write(ascii_image)
+    try:
+        with open(file_name, "w") as f:
+            f.write(ascii_image)
+    except FileNotFoundError as e:
+        raise e from ValueError("You specified the wrong path to save the image") 
     return file_name
 
 

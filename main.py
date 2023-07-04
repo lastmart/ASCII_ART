@@ -32,7 +32,6 @@ def call_video_converter(args):
     video_manager.show_video_in_console()
 
 
-
 def create_parser():
     parser = argparse.ArgumentParser(description="Converts image or video to ASCII")
     subparsers = parser.add_subparsers(required=True, help="sub-command help")
