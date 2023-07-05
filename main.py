@@ -8,7 +8,7 @@ import argparse
 def call_image_converter(args):
     ascii_image = convert_image_to_ASCII_Art(
         args.image_path,
-        args.heigth,
+        args.height,
         args.width,
         args.ascii_symbols,
     )
@@ -51,7 +51,10 @@ def add_argument_for_video_parser(parser):
         "-i", dest="video_path", type=str, help="Path to converted video"
     )
     parser.add_argument(
-        "-a", dest="ascii_symbols", type=str, help="Symbols to ASCII art"
+        "-a",
+        dest="ascii_symbols",
+        type=str,
+        help="Symbols to ASCII art (default: $@B8&WM#*oaj+~<>i!lI;:, )"
     )
     parser.set_defaults(func=call_video_converter)
 
@@ -64,16 +67,16 @@ def add_arguments_for_image_parser(parser):
         "-o", dest="path_to_save", type=str, help="Path to save ASCII art"
     )
     parser.add_argument(
-        "--heigth",
+        "--height",
         type=int,
         default=None,
-        help="Heigth of ASCII art (defalt: height of image)",
+        help="Height of ASCII art (default: height of image)",
     )
     parser.add_argument(
         "--width",
         type=int,
         default=None,
-        help="Width of ASCII art (defalt: width of image)",
+        help="Width of ASCII art (default: width of image)",
     )
     parser.add_argument(
         "-a", dest="ascii_symbols", type=str, help="Symbols to ASCII art"

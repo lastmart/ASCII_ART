@@ -15,7 +15,7 @@ class Video_manager:
             raise ValueError("You should select an .mp4 file")
         self.selected_video = selected_video
         self.ascii_chars = (
-            r"$@B%8&WM#*oaj+~<>i!lI;:, " if ascii_chars is None else ascii_chars
+            r"$@B8&WM#*oaj+~<>i!lI;:, " if ascii_chars is None else ascii_chars
         )
 
     def show_video_in_console(self):

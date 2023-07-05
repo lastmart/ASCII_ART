@@ -1,26 +1,27 @@
 from PIL import Image
 
 
-def convert_image_to_ASCII_Art(image, heigth: int, width: int, ascii_chars):
+def convert_image_to_ASCII_Art(image, height: int, width: int, ascii_chars):
     if isinstance(image, str):
         try:
             image = Image.open(image)
         except FileNotFoundError as e:
-            raise e from ValueError("You specified the wrong path to the image") 
+            raise e from ValueError(
+                "You specified the wrong path to the image")
     else:
         try:
             image = Image.fromarray(image)
         except Exception:
             raise TypeError("The image has the wrong format")
-    new_heigth = heigth if heigth is not None else image.height
+    new_height = height if height is not None else image.height
     new_width = width if width is not None else image.width
     if ascii_chars is None:
         raise ValueError("Ascii chars isn't selected")
-    return _convert_image(image, new_heigth, new_width, ascii_chars)
+    return _convert_image(image, new_height, new_width, ascii_chars)
 
 
-def _convert_image(image, heigth, width, ascii_chars):
-    resized_image = resize_image(image, width, heigth)
+def _convert_image(image, height, width, ascii_chars):
+    resized_image = resize_image(image, width, height)
     pixels = [get_grayscaled_pixel(pixel) for pixel in resized_image.getdata()]
     char_segments_count = 255 / len(ascii_chars)
     changed_pixels = [
@@ -28,7 +29,7 @@ def _convert_image(image, heigth, width, ascii_chars):
     ]
     ascii_image = []
     for i in range(0, len(changed_pixels), width):
-        ascii_image.append("".join(changed_pixels[i : i + width]))
+        ascii_image.append("".join(changed_pixels[i: i + width]))
     ascii_image = str("\n".join(ascii_image))
     return ascii_image
 
@@ -39,7 +40,8 @@ def save_ascii_image_in_file(ascii_image, path_to_save):
         with open(file_name, "w") as f:
             f.write(ascii_image)
     except FileNotFoundError as e:
-        raise e from ValueError("You specified the wrong path to save the image") 
+        raise e from ValueError(
+            "You specified the wrong path to save the image")
     return file_name
 
 
@@ -50,7 +52,8 @@ def resize_image(image, new_width, new_height):
     scale_y = new_height / height
     for y in range(new_height):
         for x in range(new_width):
-            pixel = nearest_neighbour_interpolation(image, x, y, scale_x, scale_y)
+            pixel = nearest_neighbour_interpolation(image, x, y, scale_x,
+                                                    scale_y)
             scaled_image.putpixel((x, y), pixel)
     return scaled_image
 
